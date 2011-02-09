@@ -1222,8 +1222,25 @@ function chatroom_chat_get_themed_message($message, $node) {
 function chatroom_get_message_time_string($timestamp) {
   $offset_in_hours = chatroom_get_user_timezone_offset() / 60 / 60;
   $offset_in_hours = $offset_in_hours >= 0 ? '+' . $offset_in_hours : $offset_in_hours;
-  $date = new DateTime('@' . ($timestamp + chatroom_get_user_timezone_offset()), new DateTimeZone('Etc/GMT' . $offset_in_hours));
-  return $date->format(variable_get('chatroom_msg_date_format', 'H:i:s'));
+
+	//$offset_in_hours = "foobar"; // Uncomment to cause the catch
+	try {
+			$date_time_zone = new DateTimeZone('Etc/GMT' . $offset_in_hours);
+
+	} catch (Exception $e) {
+		$message = t("Whoa! Caught exception: %e. Trying again with NO time offset.", 
+			array("%e" => $e->getMessage()));
+		watchdog("chatroom", $message);
+
+		$offset_in_hours = 0;
+		$date_time_zone = new DateTimeZone('Etc/GMT' . $offset_in_hours);
+
+	}
+
+	$date = new DateTime('@' . ($timestamp + chatroom_get_user_timezone_offset()), $date_time_zone);
+
+	return $date->format(variable_get('chatroom_msg_date_format', 'H:i:s'));
+
 }
 
 /**
