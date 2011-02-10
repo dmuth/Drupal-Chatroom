@@ -1223,7 +1223,14 @@ function chatroom_get_message_time_string($timestamp) {
   $offset_in_hours = chatroom_get_user_timezone_offset() / 60 / 60;
   $offset_in_hours = $offset_in_hours >= 0 ? '+' . $offset_in_hours : $offset_in_hours;
 
-	//$offset_in_hours = "foobar"; // Uncomment to cause the catch
+	//$offset_in_hours = "foobar"; // Uncomment for invalid data
+	//$offset_in_hours ="+0.133055555556"; // Uncomment for invalid data
+	//
+	// Turn this into an integer so we don't have to deal with 
+	// fractional values anymore.
+	//
+	$offset_in_hours = intval($offset_in_hours);
+
 	try {
 			$date_time_zone = new DateTimeZone('Etc/GMT' . $offset_in_hours);
 
