@@ -1229,6 +1229,18 @@ function chatroom_get_message_time_string($timestamp) {
 	// Turn this into an integer so we don't have to deal with 
 	// fractional values anymore.
 	//
+	//$offset_in_hours = "+1"; // Uncomment for invalid data
+
+	//
+	// Okay, I've had enough of this crap with timezone offsets.  Using
+	// this DateTimeZone object keeps throwing exceptions that I can't
+	// seem to catch on my production server, and I'm tired of it.
+	// I'm just going to do a straight up call to date(), divide by 
+	// 3600 seconds, then take that as an integer.  Making the site work
+	// is more important than worrying about the person with a floating point
+	// GMT offset who MIGHT use the site some day.
+	//
+	$offset_in_hours = date("Z") / 3600;
 	$offset_in_hours = intval($offset_in_hours);
 
 	try {
